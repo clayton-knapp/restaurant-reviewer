@@ -28,5 +28,20 @@ Additional considerations:
 
 ### PLAN
 
-- Considerations
-- Automatically createProfile upon SignUp
+- curious does passing profile.id and profile.user_id both work the same?
+Yes seems to work too
+
+- add click and redirect on user in restaurant detail to profile detail
+- add click and redirect on restaurant in review of profile detail to restaurant detail
+
+
+- Stop user adding their own likes √
+
+- Stop user from upvoting a review more than once
+
+- Stop user from leaving more than one review for a restaurant
+
+ON LOAD
+Query all reviews for that restaurant
+loop through reviews and if logged in user id === id of review
+then disable submit review

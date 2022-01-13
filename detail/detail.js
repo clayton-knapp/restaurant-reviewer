@@ -3,7 +3,8 @@ import {
     fetchRestaurantAndReviewsAndProfiles, 
     logout,
     addReview,
-    incrementLike
+    incrementLike,
+    getUser
 } from '../fetch-utils.js';
 
 checkAuth();
@@ -14,6 +15,9 @@ const cuisineEl = document.querySelector('#cuisine');
 const addressEl = document.querySelector('#address');
 const reviewForm = document.querySelector('.review-form');
 const reviewsListEl = document.querySelector('.reviews-list');
+const submitReviewButton = document.querySelector('#submit');
+const reviewTextarea = document.querySelector('#review-textarea');
+const ratingInput = document.querySelector('#rating');
 
 
 const params = new URLSearchParams(window.location.search);
@@ -27,6 +31,13 @@ window.addEventListener('load', async() => {
     await fetchAndDisplayRestaurant(restaurantId);
 
     await fetchAndDisplayReviews(restaurantId);
+
+    const session = await getUser();
+    logoutButton.textContent = `Logout ${session.user.email}`;
+
+    //STOP USER FROM ADDING MORE THAN ONE REVIEW
+
+
 });
 
 reviewForm.addEventListener('submit', async(e) => {
@@ -55,7 +66,6 @@ async function fetchAndDisplayRestaurant(restaurantId) {
 
 async function fetchAndDisplayReviews() {
     const restaurant = await fetchRestaurantAndReviewsAndProfiles(restaurantId);
-    console.log(restaurant);
 
     reviewsListEl.textContent = '';
     for (let review of restaurant.reviews) {
@@ -64,15 +74,32 @@ async function fetchAndDisplayReviews() {
         const userInfoEl = document.createElement('div');
         const userRating = document.createElement('h3');
         const userReview = document.createElement('p');
+        const userAnchor = document.createElement('a');
 
         userRating.textContent = `${review.rating}⭐️'s`;
         userReview.textContent = `"${review.text}"`;
         reviewEl.classList.add('review');
 
-        userInfoEl.textContent = `${review.profiles.email}: ${review.profiles.karma} 👍 likes`;
+        userInfoEl.textContent = `${review.profiles.email}:  ${review.profiles.karma} 👍 likes`;
+
+        userAnchor.append(userInfoEl);
+        userAnchor.href = `../profile-detail/?id=${review.profiles.id}`;
 
         const upVote = document.createElement('button');
         upVote.textContent = '+1 Like';
+
+        // User can't upvote their own post
+        const session = await getUser();
+        if (review.profiles.user_id === session.user.id) {
+            upVote.disabled = true;
+        }
+
+        //DISABLES FORM SUBMIT IF USER ALREADY HAS A REVIEW
+        if (review.profiles.user_id === session.user.id) {
+            submitReviewButton.disabled = true;
+            reviewTextarea.disabled = true;
+            ratingInput.disabled = true;
+        }
 
         upVote.addEventListener('click', async() => {
             const newKarma = review.profiles.karma + 1;
@@ -84,7 +111,7 @@ async function fetchAndDisplayReviews() {
         const voteButtonsContainer = document.createElement('div');
         voteButtonsContainer.append(upVote);
 
-        reviewEl.append(userRating, userInfoEl, voteButtonsContainer, userReview);
+        reviewEl.append(userRating, userAnchor, voteButtonsContainer, userReview);
 
         reviewsListEl.append(reviewEl);
     }

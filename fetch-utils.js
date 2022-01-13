@@ -63,6 +63,16 @@ export async function fetchProfiles() {
     return checkError(response);
 }
 
+export async function fetchProfileAndReviews(userId) {
+    const response = await client
+        .from('profiles')
+        .select('*, reviews (*, restaurants (*))')
+        .match({ id: userId })
+        .single();
+
+    return checkError(response);
+}
+
 //TEMPLATE FUNCTIONS
 
 export async function getUser() {

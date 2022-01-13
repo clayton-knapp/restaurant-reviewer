@@ -1,7 +1,8 @@
 import { 
     checkAuth, 
     logout,
-    fetchRestaurants
+    fetchRestaurants,
+    getUser
 } from '../fetch-utils.js';
 
 checkAuth();
@@ -15,6 +16,8 @@ logoutButton.addEventListener('click', () => {
 
 window.addEventListener('load', async() => {
     await fetchAndDisplayRestaurants();
+    const session = await getUser();
+    logoutButton.textContent = `Logout ${session.user.email}`;
 });
 
 async function fetchAndDisplayRestaurants() {

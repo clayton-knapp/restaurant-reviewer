@@ -1,7 +1,8 @@
 import { 
     checkAuth, 
     logout,
-    fetchProfiles
+    fetchProfiles,
+    getUser
 } from '../fetch-utils.js';
 
 checkAuth();
@@ -16,6 +17,8 @@ logoutButton.addEventListener('click', () => {
 window.addEventListener('load', async() => {
     await fetchAndDisplayProfiles();
 
+    const session = await getUser();
+    logoutButton.textContent = `Logout ${session.user.email}`;
 });
 
 async function fetchAndDisplayProfiles() {
@@ -29,7 +32,7 @@ async function fetchAndDisplayProfiles() {
         const anchor = document.createElement('a');
 
         profileInfo.textContent = `${profile.email}  --  👍 ${profile.karma}`;
-        anchor.href = `../profile-detail/id=${profile.user_id}`;
+        anchor.href = `../profile-detail/?id=${profile.id}`;
 
         anchor.append(profileInfo);
         profileEl.append(anchor);
