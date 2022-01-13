@@ -16,6 +16,45 @@ export async function createProfile(email) {
     return checkError(response);
 }
 
+export async function fetchRestaurants() {
+    const response = await client
+        .from('restaurants')
+        .select('*, reviews (profiles (*)))');
+
+    return checkError(response);
+}
+
+export async function fetchRestaurantAndReviewsAndProfiles(id) {
+    const response = await client
+        .from('restaurants')
+        .select('*, reviews (*, profiles (*))')
+        .match({ id: id })
+        .single();
+
+    return checkError(response);
+}
+
+export async function addReview(review) {
+    const response = await client
+        .from('reviews')
+        .insert({
+            text: review.userReview,
+            rating: review.userRating,
+            restaurant_id: review.restaurantId
+        });
+
+    return checkError(response);
+}
+
+export async function incrementLike(newKarma, userId) {
+    const response = await client
+        .from('profiles')
+        .update({ karma: newKarma })
+        .match({ user_id: userId });
+
+    return checkError(response);
+}
+
 //TEMPLATE FUNCTIONS
 
 export async function getUser() {
