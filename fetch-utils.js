@@ -55,6 +55,10 @@ export async function incrementLike(newKarma, userId) {
     return checkError(response);
 }
 
+export async function fetchProfilesAndReviews() {
+
+}
+
 //TEMPLATE FUNCTIONS
 
 export async function getUser() {
