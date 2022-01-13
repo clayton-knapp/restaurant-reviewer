@@ -38,8 +38,10 @@ Yes seems to work too
 - Stop user adding their own likes √
 
 - Stop user from upvoting a review more than once
+    - would have to track a history of user upvotes
+    - or have an upvotes table with user ids to compare to
 
-- Stop user from leaving more than one review for a restaurant
+- Stop user from leaving more than one review for a restaurant √
 
 ON LOAD
 Query all reviews for that restaurant
